@@ -117,7 +117,9 @@ class SparseVectorStore(BaseVectorStore):
         # Calculate the inverse document frequency for a word
         # HINT: Use the formula provided in the BM25 algorithm and np.log()
         "Your code here"
-        idf_score = None
+        idf_score = np.log(
+            (corpus_size + 1) / (doc_count + .5)
+        )
         return idf_score
 
     def _tokenize_text(self, corpus: List[str] | str):
@@ -154,7 +156,12 @@ class SparseVectorStore(BaseVectorStore):
             # calulate the score for each token in the query
             # HINT: use self.doc_freqs, self.idf, self.corpus_size, self.avgdl
             "Your code here"
-            cur_score = None
+            # If this is based on BM25:
+            tf = np.array([doc.get(q, 0) for doc in self.doc_freqs])
+            tf = tf * (self.k1 + 1) / (tf + self.k1 * ( 1 - self.b + self.b * np.array(self.doc_len) / self.avgdl ))
+            idf = self.idf.get(q, 0) # float
+            
+            cur_score = tf * idf
             score += cur_score
         return score
 

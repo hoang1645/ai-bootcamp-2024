@@ -7,6 +7,7 @@ from llama_index.core.node_parser import SentenceSplitter
 from vector_store.node import TextNode, VectorStoreQueryResult
 from vector_store.semantic_vector_store import SemanticVectorStore
 from vector_store.sparse_vector_store import SparseVectorStore
+from time import sleep
 
 
 def prepare_data_nodes(documents: list, chunk_size: int = 200) -> list[TextNode]:
@@ -77,8 +78,8 @@ class RAGPipeline:
         self.model = None
 
         # GROQ
-        # from langchain_groq import ChatGroq
-        # self.model = ChatGroq(model="llama3-70b-8192", temperature=0)
+        from langchain_groq import ChatGroq
+        self.model = ChatGroq(model="llama3-8b-8192", temperature=0)
 
         # OpenAI
         # from langchain_openai import ChatOpenAI
@@ -195,6 +196,8 @@ def main(
 
                 predicted_evidences.append(context_list)
                 predicted_answers.append(predicted_answer)
+                sleep(5)
+                
 
     # save the results
     with open(output_path, "w") as f:

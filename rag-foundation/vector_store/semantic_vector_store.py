@@ -82,7 +82,6 @@ class SemanticVectorStore(BaseVectorStore):
         # HINT: np.linalg.norm
         "Your code here"
         cos_sim_arr = dproduct_arr / (np.linalg.norm(qembed_np) * np.linalg.norm(dembed_np, axis=1))
-
         # get the indices of the top k similarities
         "Your code here"
         similarities = cos_sim_arr[node_ids:=(np.argsort(cos_sim_arr)[-similarity_top_k:][::-1])]

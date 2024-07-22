@@ -79,7 +79,7 @@ class RAGPipeline:
 
         # GROQ
         from langchain_groq import ChatGroq
-        self.model = ChatGroq(model="llama3-8b-8192", temperature=0)
+        self.model = ChatGroq(model="llama3-70b-8192", temperature=0)
 
         # OpenAI
         # from langchain_openai import ChatOpenAI
@@ -196,7 +196,7 @@ def main(
 
                 predicted_evidences.append(context_list)
                 predicted_answers.append(predicted_answer)
-                sleep(5)
+                sleep(10)
                 
 
     # save the results

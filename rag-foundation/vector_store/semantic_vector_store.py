@@ -84,8 +84,8 @@ class SemanticVectorStore(BaseVectorStore):
         cos_sim_arr = dproduct_arr / (np.linalg.norm(qembed_np) * np.linalg.norm(dembed_np, axis=1))
         # get the indices of the top k similarities
         "Your code here"
-        similarities = cos_sim_arr[node_ids:=(np.argsort(cos_sim_arr)[-similarity_top_k:][::-1])]
-        
+        similarities = cos_sim_arr[idx:=(np.argsort(cos_sim_arr)[-similarity_top_k:][::-1])]
+        node_ids = [doc_ids[i] for i in idx]
         return similarities, node_ids
 
     def query(self, query: str, top_k: int = 3) -> VectorStoreQueryResult:

@@ -117,6 +117,7 @@ class SparseVectorStore(BaseVectorStore):
         # Calculate the inverse document frequency for a word
         # HINT: Use the formula provided in the BM25 algorithm and np.log()
         "Your code here"
+        if doc_count == 0: return 0.
         idf_score = np.log(
             (corpus_size + 1) / (doc_count + .5)
         )
@@ -164,6 +165,7 @@ class SparseVectorStore(BaseVectorStore):
             cur_score = tf * idf
             score += cur_score
         return score
+    
 
     def query(self, query: str, top_k: int = 3) -> VectorStoreQueryResult:
         """Query similar nodes.

@@ -21,13 +21,15 @@ class SemanticVectorStore(BaseVectorStore):
     """Semantic Vector Store using SentenceTransformer embeddings."""
 
     saved_file: str = "rag-foundation/data/test_db_00.csv"
-    embed_model_name: str = "all-MiniLM-L6-v2"
-    embed_model: SentenceTransformer = SentenceTransformer(embed_model_name)
+    embed_model_name: str = "multi-qa-MiniLM-L6-cos-v1"
+    embed_model: SentenceTransformer = SentenceTransformer(embed_model_name).half()
+    embeddings: object | None = None
 
     def __init__(self, **data):
         super().__init__(**data)
         self._setup_store()
-
+        # if self.embeddings is None:
+        #     self.embeddings = self.embed_model.encode([node.text for node in self.node_dict.values()], normalize_embeddings=True)
     def get(self, text_id: str) -> TextNode:
         """Get node."""
         try:
@@ -76,7 +78,7 @@ class SemanticVectorStore(BaseVectorStore):
         # the query embedding with the document embeddings
         # HINT: np.dot
         "Your code here"
-        dproduct_arr = qembed_np @ dembed_np.T
+        dproduct_arr = np.dot(dembed_np, qembed_np)
         # calculate the cosine similarity
         # by dividing the dot product by the norm
         # HINT: np.linalg.norm
@@ -84,16 +86,17 @@ class SemanticVectorStore(BaseVectorStore):
         cos_sim_arr = dproduct_arr / (np.linalg.norm(qembed_np) * np.linalg.norm(dembed_np, axis=1))
         # get the indices of the top k similarities
         "Your code here"
-        similarities = cos_sim_arr[idx:=(np.argsort(cos_sim_arr)[-similarity_top_k:][::-1])]
+        similarities = cos_sim_arr[idx:=(np.argsort(cos_sim_arr)[-similarity_top_k:][::-1])].tolist()
         node_ids = [doc_ids[i] for i in idx]
         return similarities, node_ids
 
     def query(self, query: str, top_k: int = 3) -> VectorStoreQueryResult:
         """Query similar nodes."""
         query_embedding = cast(List[float], self._get_text_embedding(query))
-        doc_embeddings = [node.embedding for node in self.node_dict.values()]
+        doc_embeddings = [node.embedding for node in self.node_dict.values()] 
+        doc_embeddings = self.embeddings
         doc_ids = list(self.node_dict.keys())
-        if len(doc_embeddings) == 0:
+        if len(doc_embeddings) == 0 or doc_embeddings is None:
             logger.error("No documents found in the index.")
             result_nodes, similarities, node_ids = [], [], []
         else:

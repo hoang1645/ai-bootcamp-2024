@@ -56,7 +56,7 @@ def prepare_vector_store(documents: list, mode: str, force_index=False, chunk_si
     elif mode == "semantic":
         vector_store = SemanticVectorStore(
             persist=True,
-            saved_file="data/dense.csv",
+            saved_file="data/dense_v2.csv",
             force_index=force_index,
         )
     else:
@@ -132,6 +132,7 @@ def main(
     Returns:
         None
     """
+    from tqdm import tqdm
     # Load the data
     raw_data = json.load(open(data_path, "r", encoding="utf-8"))
 
@@ -141,7 +142,7 @@ def main(
     # we will loop through each paper, gather the full text of each section
     # and prepare the documents for the vector store
     # and answer the query
-    for _, values in raw_data.items():
+    for _, values in tqdm(raw_data.items()):
         # for each paper in qasper
         documents = []
 

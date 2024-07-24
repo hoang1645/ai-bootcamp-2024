@@ -65,6 +65,8 @@ def prepare_vector_store(documents: list, mode: str, force_index=False, chunk_si
     if force_index:
         nodes = prepare_data_nodes(documents=documents, chunk_size=chunk_size)
         vector_store.add(nodes)
+        if mode =='sparse':
+            vector_store._initialize_bm25_assets()
 
     return vector_store
 
@@ -79,7 +81,7 @@ class RAGPipeline:
 
         # GROQ
         from langchain_groq import ChatGroq
-        self.model = ChatGroq(model="llama3-70b-8192", temperature=0)
+        self.model = ChatGroq(model="llama3-8b-8192", temperature=0)
 
         # OpenAI
         # from langchain_openai import ChatOpenAI
@@ -183,7 +185,13 @@ def main(
                 predicted_answers.append("")
 
             else:
-                predicted_answer, context_list = rag_pipeline.answer(query, top_k=top_k)
+                while 1:
+                    try:
+                        predicted_answer, context_list = rag_pipeline.answer(query, top_k=top_k)
+                        break
+                    except:
+                        sleep(5)
+                        pass
 
                 # Just In Case. Print out the context list for each question
                 # if needed.
@@ -197,7 +205,7 @@ def main(
 
                 predicted_evidences.append(context_list)
                 predicted_answers.append(predicted_answer)
-                sleep(10)
+                sleep(5)
                 
 
     # save the results

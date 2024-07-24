@@ -107,7 +107,7 @@ class SparseVectorStore(BaseVectorStore):
 
             self.corpus_size += 1
 
-        self.avgdl = num_doc / self.corpus_size
+        self.avgdl = num_doc / self.corpus_size if self.corpus_size != 0 else 0
         self.idf = {
             word: self._calculate_idf(doc_count, self.corpus_size)
             for word, doc_count in nd.items()

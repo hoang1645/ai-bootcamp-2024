@@ -11,7 +11,7 @@ from .base import BaseVectorStore
 from .node import TextNode, VectorStoreQueryResult
 
 logger.add(
-    sink=sys.stdout,
+    sink=sys.stderr,
     colorize=True,
     format="<green>{time}</green> <level>{message}</level>",
 )
@@ -94,9 +94,9 @@ class SemanticVectorStore(BaseVectorStore):
         """Query similar nodes."""
         query_embedding = cast(List[float], self._get_text_embedding(query))
         doc_embeddings = [node.embedding for node in self.node_dict.values()] 
-        doc_embeddings = self.embeddings
+        # doc_embeddings = self.embeddings
         doc_ids = list(self.node_dict.keys())
-        if len(doc_embeddings) == 0 or doc_embeddings is None:
+        if doc_embeddings is None or len(doc_embeddings) == 0:
             logger.error("No documents found in the index.")
             result_nodes, similarities, node_ids = [], [], []
         else:
